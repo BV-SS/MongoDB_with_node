@@ -4,7 +4,10 @@ const { connectToDB, getDB } = require("./db");
 
 // init express app and middleware
 const app = express();
+app.use(express.json());
+
 let db;
+
 // DB connection
 connectToDB((err) => {
     if (!err) {
@@ -61,3 +64,17 @@ app.get("/books/:id", (req, res) => {
     }
 
 })
+
+// Adding single document with post request
+app.post("/books", (req,res) => {
+    const book = req.body;
+
+    db.collection('books')
+        .insertOne(book)
+        .then((result) => {
+            res.status(201).json(result)
+        })
+        .catch(err => {
+            res.status(500).json({"error": "Could not add document"})
+        })    
+    })
