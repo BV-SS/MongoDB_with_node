@@ -78,3 +78,23 @@ app.post("/books", (req,res) => {
             res.status(500).json({"error": "Could not add document"})
         })    
     })
+
+
+// Deleting a document
+app.delete("/books/:id",(req,res) => {
+    if(ObjectId.isValid(req.params.id)){
+
+        const id = new ObjectId(req.params.id)
+        db.collection('books')
+            .deleteOne({_id:id})
+            .then((result) => {
+                res.status(200).json(result)
+            })
+            .catch((err) => {
+                res.status(500).json({"error":"Could not delete the document"})
+            })
+    }
+    else{
+        res.status(500).json({"error":"Not a valid object id"})
+    }
+})
