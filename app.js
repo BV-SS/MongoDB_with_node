@@ -119,3 +119,22 @@ app.patch("/books/:id",(req,res) => {
         res.status(500).json({"error" : "Not a valid object id"})
     }
 })
+
+// Pagination API
+app.get('/booksPagination', (req,res) => {
+    const page = req.query.p || 0 ; // means 0 by default esle take the vale of query parameter;
+    const booksPerPage = 3
+    const books = []
+
+    db.collection('books')
+        .find().sort({ "author" : 1})
+        .skip(page * booksPerPage)
+        .limit(booksPerPage)
+        .forEach(book => books.push(book))
+        .then(() => {
+            res.status(200).json(books)
+        })
+        .catch(err => {
+            res.status(500).json({"error" : "Could not fetch documents"})
+        })
+})
